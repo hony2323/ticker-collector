@@ -6,6 +6,16 @@ class ExchangeCollector(ABC):
         """Run the collector's operational loop."""
         pass
 
+    @abstractmethod
+    def dispose(self):
+        """Dispose of the collector's resources."""
+        pass
+
+    @abstractmethod
+    def retry(self):
+        """Retry the collector's operation."""
+        pass
+
 class Parser(ABC):
     @abstractmethod
     def parse(self, raw_data):
