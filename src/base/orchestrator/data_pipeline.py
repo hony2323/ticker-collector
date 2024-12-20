@@ -1,6 +1,5 @@
 import asyncio
 
-
 class DataPipeline:
     def __init__(self, collector, parser, submitter):
         """
@@ -25,7 +24,7 @@ class DataPipeline:
 
     def execute(self, raw_data):
         """
-        Public method to run the asynchronous pipeline execution.
+        Public method to run the asynchronous pipeline execution non-blocking.
         :param raw_data: Raw data fetched by the collector
         """
-        asyncio.run(self._execute(raw_data))
+        asyncio.create_task(self._execute(raw_data))  # Fire-and-forget

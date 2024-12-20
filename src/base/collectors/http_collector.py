@@ -2,6 +2,7 @@ import requests
 import time
 from src.core.interfaces import ExchangeCollector
 
+
 class HTTPCollector(ExchangeCollector):
     def __init__(self, url, auth=None, headers=None, interval=5, pipeline=None):
         """
@@ -19,14 +20,14 @@ class HTTPCollector(ExchangeCollector):
         self.running = True
 
     def run(self):
-        """Fetch data and pass it to the pipeline."""
+        """Fetch data and pass it to the pipeline synchronously."""
         while self.running:
             try:
                 response = requests.get(self.url, auth=self.auth, headers=self.headers)
                 response.raise_for_status()
                 data = response.json()
                 if self.pipeline:
-                    self.pipeline.execute(data)
+                    self.pipeline.execute(data)  # Non-blocking now
                 time.sleep(self.interval)
             except requests.RequestException as e:
                 print(f"HTTPCollector encountered an error: {e}")
