@@ -1,5 +1,4 @@
-import threading
-
+import asyncio
 
 class CollectorManager:
     def __init__(self, collectors):
@@ -7,33 +6,27 @@ class CollectorManager:
         :param collectors: List of collector instances
         """
         self.collectors = collectors
-        self.threads = []
+        self.tasks = []
 
-    def start_collectors(self):
-        """Start each collector in a separate thread and wait for all threads to complete."""
+    async def start_collectors(self):
+        """Start each collector asynchronously."""
         for collector in self.collectors:
-            thread = threading.Thread(target=self._collector_wrapper, args=(collector,))
-            thread.daemon = True  # Ensure threads exit when the main program exits
-            thread.start()
-            self.threads.append(thread)
-            print(f"\nStarted collector: {collector.__class__.__name__}")
+            task = asyncio.create_task(self._collector_wrapper(collector))
+            self.tasks.append(task)
+            print(f"Started collector: {collector.__class__.__name__}")
 
-        # Wait for all threads to complete
-        for thread in self.threads:
-            thread.join()
-        print("All collectors have completed.")
-
-    def _collector_wrapper(self, collector):
-        """Wrap the collector's run method to handle crashes gracefully."""
+    async def _collector_wrapper(self, collector):
+        """Wrap the collector's run method to handle errors gracefully."""
         while True:
             try:
-                collector.run()
+                await collector.run()
             except Exception as e:
                 print(f"Collector {collector.__class__.__name__} encountered an error: {e}")
-                collector.retry()  # Retry mechanism for the collector
+                await collector.retry()
 
-    def stop_collectors(self):
-        """Call the dispose method for each collector."""
+    async def stop_collectors(self):
+        """Stop all collector tasks gracefully."""
         for collector in self.collectors:
-            collector.dispose()
-        print("All collectors have been disposed.")
+            await collector.dispose()
+        await asyncio.gather(*self.tasks, return_exceptions=True)
+        print("All collectors have been stopped.")
