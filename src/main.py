@@ -1,16 +1,18 @@
-# This is a sample Python script.
+from src.base.collectors.http_collector import HTTPCollector
+from src.base.collectors.socket_collector import SocketCollector
+from src.base.manager.collector_manager import CollectorManager
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# Instantiate collectors
+http_collector = HTTPCollector()
+socket_collector = SocketCollector()
 
+# Manage and start collectors
+manager = CollectorManager(collectors=[http_collector, socket_collector])
+manager.start_collectors()
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# Keep the main thread alive to allow collectors to run
+try:
+    while True:
+        pass
+except KeyboardInterrupt:
+    print("Exiting...")
