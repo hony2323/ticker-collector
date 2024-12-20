@@ -16,3 +16,12 @@ class CollectorManager:
             thread.start()
             self.threads.append(thread)
             print(f"Started collector: {collector.__class__.__name__}")
+
+    def stop_collectors(self):
+        """Stop all collector threads."""
+        for thread in self.threads:
+            if thread.is_alive():
+                print(f"Stopping thread: {thread.name}")
+                # Ensure the thread completes its current task
+                thread.join()
+        print("All collectors have been stopped.")
