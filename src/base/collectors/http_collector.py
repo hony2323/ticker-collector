@@ -1,8 +1,16 @@
-import aiohttp
-import asyncio
+import requests
+import time
+from src.core.interfaces import ExchangeCollector
 
-class HTTPCollector:
+class HTTPCollector(ExchangeCollector):
     def __init__(self, url, auth=None, headers=None, interval=5, pipeline=None):
+        """
+        :param url: API endpoint to fetch data from
+        :param auth: Authentication information (e.g., token or basic auth tuple)
+        :param headers: Additional headers for the HTTP request
+        :param interval: Time interval (in seconds) between requests
+        :param pipeline: An instance of DataPipeline
+        """
         self.url = url
         self.auth = auth
         self.headers = headers or {}
@@ -10,25 +18,24 @@ class HTTPCollector:
         self.pipeline = pipeline
         self.running = True
 
-    async def run(self):
-        """Fetch data and pass it to the pipeline asynchronously."""
+    def run(self):
+        """Fetch data and pass it to the pipeline."""
         while self.running:
             try:
-                async with aiohttp.ClientSession(auth=self.auth, headers=self.headers) as session:
-                    async with session.get(self.url) as response:
-                        response.raise_for_status()
-                        data = await response.json()
-                        if self.pipeline:
-                            await self.pipeline._execute(data)
-                await asyncio.sleep(self.interval)
-            except Exception as e:
+                response = requests.get(self.url, auth=self.auth, headers=self.headers)
+                response.raise_for_status()
+                data = response.json()
+                if self.pipeline:
+                    self.pipeline.execute(data)
+                time.sleep(self.interval)
+            except requests.RequestException as e:
                 print(f"HTTPCollector encountered an error: {e}")
 
-    async def dispose(self):
+    def dispose(self):
         """Stop the collector loop."""
         self.running = False
 
-    async def retry(self):
-        """Handle retry logic asynchronously."""
+    def retry(self):
+        """Handle retry logic if needed."""
         print("Retrying HTTPCollector...")
-        await asyncio.sleep(2)
+        time.sleep(2)
