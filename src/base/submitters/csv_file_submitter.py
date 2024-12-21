@@ -50,7 +50,9 @@ class CSVFileWriter(Submitter):
                 file_exists = os.path.isfile(file_path)
                 async with aiofiles.open(file_path, mode='a', encoding='utf-8') as file:
                     if not file_exists:
+                        # Write the header if the file doesn't exist
                         await file.write(','.join(fieldnames) + '\n')
+                    # Write the row
                     await file.write(','.join(map(str, data.values())) + '\n')
                 print(f"Successfully wrote data to file: {file_path}")
             except Exception as e:
