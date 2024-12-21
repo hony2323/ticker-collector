@@ -46,11 +46,6 @@ async def main():
     manager = CollectorManager(collectors=[okx_collector])
     await manager.start_collectors()
 
-    # Let collectors run for a while
-    await asyncio.sleep(10)
-
-    # Stop collectors
-    await manager.stop_collectors()
 
 
 if __name__ == "__main__":

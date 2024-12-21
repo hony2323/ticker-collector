@@ -15,7 +15,7 @@ class OKXParser(Parser):
 
             # Normalize to the standard format
             parsed_data = {
-                "timestamp": datetime.datetime.utcfromtimestamp(int(ticker_data["ts"]) / 1000).isoformat(),
+                "timestamp": int(ticker_data["ts"]) / 1000,
                 "exchange": self.exchange_name,
                 "instrument_id": ticker_data["instId"],
                 "price": float(ticker_data["last"]),

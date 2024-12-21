@@ -16,7 +16,8 @@ class DataPipeline:
         """
         try:
             parsed_data = self.parser.parse(raw_data)
-            await asyncio.to_thread(self.submitter.submit, parsed_data)
+            parsed_data_dict = parsed_data.to_dict()
+            await self.submitter.submit(parsed_data_dict)
         except Exception as e:
             print(f"Pipeline execution error: {e}")
 
