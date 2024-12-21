@@ -5,7 +5,7 @@ from src.base.orchestrator.data_pipeline import DataPipeline
 from src.base.manager.collector_manager import CollectorManager
 from src.base.parsers.generic_parser import GenericParser
 from src.base.parsers.okx_parser import OKXParser
-from src.base.submitters.local_storage_submitter import LocalStorageSubmitter
+from src.base.submitters.local_storage_submitter import LocalStorageSubmitter, JSONLinesFileWriter
 
 
 async def main():
@@ -13,6 +13,8 @@ async def main():
     parser = GenericParser()
     okx_parser = OKXParser()
     submitter = LocalStorageSubmitter()
+    file_writer = JSONLinesFileWriter(file_path="parsed_data.jsonl")
+
 
     # Create pipeline
     pipeline = DataPipeline(
@@ -22,7 +24,7 @@ async def main():
 
     okx_pipeline = DataPipeline(
         parser=okx_parser,
-        submitter=submitter,
+        submitter=file_writer,
     )
 
     # Instantiate collectors with the pipeline
