@@ -12,7 +12,6 @@ class TestDataPipeline(unittest.TestCase):
 
         # Create the pipeline
         pipeline = DataPipeline(
-            collector=None,  # Collector is unused directly in the pipeline
             parser=mock_parser,
             submitter=mock_submitter
         )

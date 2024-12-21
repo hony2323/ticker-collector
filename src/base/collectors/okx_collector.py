@@ -2,6 +2,8 @@ import asyncio
 import time
 from src.core.interfaces import ExchangeCollector
 import okx.MarketData as MarketData
+import json
+
 
 class OKXCollector(ExchangeCollector):
     def __init__(self, inst_id, flag="0", interval=5, pipeline=None):
@@ -10,7 +12,7 @@ class OKXCollector(ExchangeCollector):
         self.interval = interval
         self.pipeline = pipeline
         self.running = True
-        self.market_data_api = MarketData.MarketAPI(flag=self.flag)
+        self.market_data_api = MarketData.MarketAPI(flag=self.flag, debug=False)
 
     async def run(self):
         """Fetch data and pass it to the pipeline asynchronously."""

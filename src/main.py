@@ -4,17 +4,24 @@ from src.base.collectors.okx_collector import OKXCollector
 from src.base.orchestrator.data_pipeline import DataPipeline
 from src.base.manager.collector_manager import CollectorManager
 from src.base.parsers.generic_parser import GenericParser
+from src.base.parsers.okx_parser import OKXParser
 from src.base.submitters.local_storage_submitter import LocalStorageSubmitter
+
 
 async def main():
     # Create parser and submitter
     parser = GenericParser()
+    okx_parser = OKXParser()
     submitter = LocalStorageSubmitter()
 
     # Create pipeline
     pipeline = DataPipeline(
-        collector=None,  # Collector doesn't directly interact with the pipeline here
         parser=parser,
+        submitter=submitter,
+    )
+
+    okx_pipeline = DataPipeline(
+        parser=okx_parser,
         submitter=submitter,
     )
 
@@ -29,7 +36,7 @@ async def main():
         inst_id="BTC-USD-SWAP",
         flag="0",
         interval=1,
-        pipeline=pipeline
+        pipeline=okx_pipeline
     )
 
     # Create and start the manager
@@ -42,6 +49,7 @@ async def main():
 
     # Stop collectors
     await manager.stop_collectors()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

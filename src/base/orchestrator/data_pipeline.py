@@ -1,13 +1,11 @@
 import asyncio
 
 class DataPipeline:
-    def __init__(self, collector, parser, submitter):
+    def __init__(self, parser, submitter):
         """
-        :param collector: An instance of ExchangeCollector
         :param parser: An instance of Parser
         :param submitter: An instance of Submitter
         """
-        self.collector = collector
         self.parser = parser
         self.submitter = submitter
 
