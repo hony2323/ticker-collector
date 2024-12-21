@@ -5,34 +5,31 @@ from src.base.orchestrator.data_pipeline import DataPipeline
 from src.base.manager.collector_manager import CollectorManager
 from src.base.parsers.generic_parser import GenericParser
 from src.base.parsers.okx_parser import OKXParser
-from src.base.submitters.local_storage_submitter import LocalStorageSubmitter, JSONLinesFileWriter
+from src.base.submitters.combination_submitter import CombinationSubmitter
+from src.base.submitters.csv_file_submitter import CSVFileWriter
+from src.base.submitters.jsonl_file_submitter import  JSONLinesFileWriter
 
 
 async def main():
     # Create parser and submitter
-    parser = GenericParser()
     okx_parser = OKXParser()
-    submitter = LocalStorageSubmitter()
-    file_writer = JSONLinesFileWriter(base_path="data")
+    json_file_writer = JSONLinesFileWriter(base_path="data")
+    csv_file_writer = CSVFileWriter(base_path="data")
+    submitter = CombinationSubmitter(submitters=[json_file_writer, csv_file_writer])
 
 
-    # Create pipeline
-    pipeline = DataPipeline(
-        parser=parser,
-        submitter=submitter,
-    )
 
     okx_pipeline = DataPipeline(
         parser=okx_parser,
-        submitter=file_writer,
+        submitter=submitter,
     )
 
-    # Instantiate collectors with the pipeline
-    http_collector = HTTPCollector(
-        url="https://api.example.com/data",
-        interval=1,
-        pipeline=pipeline
-    )
+    # # Instantiate collectors with the pipeline
+    # http_collector = HTTPCollector(
+    #     url="https://api.example.com/data",
+    #     interval=1,
+    #     pipeline=pipeline
+    # )
 
     okx_collector = OKXCollector(
         inst_id="BTC-USD-SWAP",
