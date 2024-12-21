@@ -13,7 +13,7 @@ async def main():
     parser = GenericParser()
     okx_parser = OKXParser()
     submitter = LocalStorageSubmitter()
-    file_writer = JSONLinesFileWriter(file_path="parsed_data.jsonl")
+    file_writer = JSONLinesFileWriter(base_path="data")
 
 
     # Create pipeline
