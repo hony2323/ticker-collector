@@ -26,7 +26,7 @@ class CSVFileWriter(Submitter):
         :return: Full file path for the data file.
         """
         print(f"Generating file path for exchange: {exchange_name}, timestamp: {timestamp}")
-        day = datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d")
+        day = datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d_%H00")
         dir_path = os.path.join(self.base_path, exchange_name, day)
         os.makedirs(dir_path, exist_ok=True)  # Ensure the directory exists
         file_path = os.path.join(dir_path, f"data.csv")
